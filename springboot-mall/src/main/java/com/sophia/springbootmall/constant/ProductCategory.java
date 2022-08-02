@@ -1,4 +1,7 @@
 package com.sophia.springbootmall.constant;
 
-public class ProductCategory {
+public enum ProductCategory {
+    FOOD,
+    CAR,
+    E_BOOK
 }

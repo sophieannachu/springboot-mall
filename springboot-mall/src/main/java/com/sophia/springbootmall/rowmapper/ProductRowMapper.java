@@ -1,5 +1,6 @@
 package com.sophia.springbootmall.rowmapper;
 
+import com.sophia.springbootmall.constant.ProductCategory;
 import com.sophia.springbootmall.model.Product;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -14,7 +15,17 @@ public class ProductRowMapper implements RowMapper<Product> {
 
         product.setProductId(resultSet.getInt("product_id"));
         product.setProductName(resultSet.getString("product_name"));
-        product.setCategory(resultSet.getString("category"));
+
+
+
+        String categoryStr = resultSet.getString("category");//取出資料庫的值
+        ProductCategory category = ProductCategory.valueOf(categoryStr); //將字串轉換成enum類型
+        product.setCategory(category);
+
+
+        //product.setCategory(ProductCategory.valueOf(resultSet.getString("category")));
+
+
         product.setImageUrl(resultSet.getString("image_url"));
         product.setPrice(resultSet.getInt("price"));
         product.setDescription(resultSet.getString("description"));
