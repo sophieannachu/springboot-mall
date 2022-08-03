@@ -17,6 +17,7 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
+    //查詢商品
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId){
                  Product product = productService.getProductById(productId);
@@ -28,6 +29,7 @@ public class ProductController {
                 }
     }
 
+    //新增商品
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
     //只要有加＠NotNull的註解，驗證從前端傳過來的參數。要記得在參數前面加上＠Valid，容易忘記。
@@ -39,7 +41,7 @@ public class ProductController {
 
     }
 
-
+    //修改商品
     @PutMapping("/products/{productId}")
     public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
                                                  @RequestBody @Valid ProductRequest productRequest){
@@ -61,6 +63,17 @@ public class ProductController {
 
         return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
 
+    }
+
+    //刪除商品
+    @DeleteMapping("/products/{productId}")
+    public ResponseEntity<?> deleteProduct(@PathVariable Integer productId){
+
+        productService.deleteProductById(productId);
+
+        //對前端來說，只要這個商品不存在了，就代表刪除商品功能成功 No_content
+        //不需要增加404 NOt_Found檢查
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }

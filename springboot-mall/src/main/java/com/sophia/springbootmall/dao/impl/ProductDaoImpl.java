@@ -22,6 +22,7 @@ public class ProductDaoImpl implements ProductDao {
     @Autowired
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
+    //查詢商品
     @Override
     public Product getProductById(Integer productId) {
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, description, " +
@@ -40,6 +41,7 @@ public class ProductDaoImpl implements ProductDao {
         }
     }
 
+    //新增商品
     @Override
     public Integer createProduct(ProductRequest productRequest) {
         String sql = "INSERT INTO product(product_name, category, image_url, price, stock, " +
@@ -68,6 +70,7 @@ public class ProductDaoImpl implements ProductDao {
         return productId;
     }
 
+    //修改商品
     @Override
     public void updateProduct(Integer productId, ProductRequest productRequest) {
         String sql = "Update product SET product_name = :productName, category = :category, image_url = :imageUrl, " +
@@ -87,5 +90,16 @@ public class ProductDaoImpl implements ProductDao {
         map.put("lastModifiedDate", new Date()); //修改商品數據時，也要修改最後修改時間的值
 
         namedParameterJdbcTemplate.update(sql,map);
+    }
+
+    //刪除商品
+    @Override
+    public void deleteProductById(Integer productId) {
+        String sql = "DELETE FROM product WHERE product_id = :productId";
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("productId", productId);
+
+        namedParameterJdbcTemplate.update(sql, map);
     }
 }
