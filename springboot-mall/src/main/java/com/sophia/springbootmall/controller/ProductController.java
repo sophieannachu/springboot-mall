@@ -38,4 +38,29 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(product); //回傳一個Http狀態碼給前端
 
     }
+
+
+    @PutMapping("/products/{productId}")
+    public ResponseEntity<Product> updateProduct(@PathVariable Integer productId,
+                                                 @RequestBody @Valid ProductRequest productRequest){
+        //使用productRequest參數的原因是因為不允許前端修改ID,創建日期等參數，所以使用ProductRequest非常適合
+
+        // 先檢查product是否存在
+        Product product = productService.getProductById(productId);
+
+        if (product == null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        //修改商品數據
+        //先預設定Service會回傳updateProduct方法，
+        // 第一個參數代表要修改哪個商品，第二個商品是修改後的值是什麼
+        productService.updateProduct(productId,productRequest);
+
+        Product updateProduct = productService.getProductById(productId);
+
+        return ResponseEntity.status(HttpStatus.OK).body(updateProduct);
+
+    }
+
 }
