@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 public class ProductController {
@@ -17,11 +18,22 @@ public class ProductController {
     @Autowired
     private ProductService productService;
 
-    //查詢商品
+
+    @GetMapping("/products")
+    public ResponseEntity<List<Product>> getProducts(){
+        List<Product> productList = productService.getProducts();
+        return ResponseEntity.status(HttpStatus.OK).body(productList);
+        //不管有沒有搜尋到商品都回傳200給前端，和單一搜尋不同
+    }
+
+
+
+    //查詢單ㄧ商品
     @GetMapping("/products/{productId}")
     public ResponseEntity<Product> getProduct(@PathVariable Integer productId){
                  Product product = productService.getProductById(productId);
 
+                 //因為有指定網址，所以要做下面檢查是否有該商品
                 if(product != null){
                     return ResponseEntity.status(HttpStatus.OK).body(product);
                 }else{
@@ -33,7 +45,8 @@ public class ProductController {
     @PostMapping("/products")
     public ResponseEntity<Product> createProduct(@RequestBody @Valid ProductRequest productRequest) {
     //只要有加＠NotNull的註解，驗證從前端傳過來的參數。要記得在參數前面加上＠Valid，容易忘記。
-        Integer productId = productService.createProduct(productRequest); //預期Service會提供一個createProduct方法，會去資料庫生成的productId傳回來給我們
+        Integer productId = productService.createProduct(productRequest);
+        //預期Service會提供一個createProduct方法，會去資料庫生成的productId傳回來給我們
 
         Product product = productService.getProductById(productId);
 
