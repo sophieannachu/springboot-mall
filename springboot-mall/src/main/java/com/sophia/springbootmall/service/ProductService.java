@@ -13,8 +13,8 @@ public interface ProductService {
 
     Integer createProduct(ProductRequest productRequest);
 
-    public void updateProduct(Integer productId, ProductRequest productRequest);
+    void updateProduct(Integer productId, ProductRequest productRequest);
 
-    public void deleteProductById(Integer productId);
+    void deleteProductById(Integer productId);
 
 }
