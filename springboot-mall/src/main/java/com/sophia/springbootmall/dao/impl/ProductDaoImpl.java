@@ -47,6 +47,9 @@ public class ProductDaoImpl implements ProductDao {
             map.put("search", "%" + productQueryParams.getSearch() + "%"); // 注意%不能寫在上面SQL語句裡
         }
 
+        //ORDER BY和 Sort原本就已預設好，所以不用再做null檢查～
+        sql = sql +" ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
+        // 注意不能寫成 ORDER by :orderBy
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 

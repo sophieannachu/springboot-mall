@@ -23,16 +23,25 @@ public class ProductController {
 
     @GetMapping("/products")
     public ResponseEntity<List<Product>> getProducts(
+            //以下為查詢條件Filtering參數
             @RequestParam(required = false) ProductCategory category,
             //required = false代表category是可選的參數非必選
-            @RequestParam(required = false) String search
+            @RequestParam(required = false) String search,
             //required = false代表關鍵字搜尋非必選
+
+            //以下為排序 Sorting參數
+            @RequestParam(defaultValue = "created_date") String orderBy,
+            //根據created_date作排序
+            @RequestParam(defaultValue = "desc") String sort
+            //升幂asc或降幂desc排序
     ){
 
-        //設計productQueryParams，代表以後無論增加多少條件參數都不用再一一檢查慢慢修改，統一在一個class修改
+        //設計productQueryParams，代表以後無論增加多少條件參數都不用再檢查Service,Dao，統一在一個class修改
         ProductQueryParams productQueryParams = new ProductQueryParams();
         productQueryParams.setCategory(category);
         productQueryParams.setSearch(search);
+        productQueryParams.setOrderBy(orderBy);
+        productQueryParams.setSort(sort);
 
         List<Product> productList = productService.getProducts(productQueryParams);
 
