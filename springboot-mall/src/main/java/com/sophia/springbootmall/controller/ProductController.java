@@ -2,6 +2,7 @@ package com.sophia.springbootmall.controller;
 
 
 import com.sophia.springbootmall.constant.ProductCategory;
+import com.sophia.springbootmall.dto.ProductQueryParams;
 import com.sophia.springbootmall.dto.ProductRequest;
 import com.sophia.springbootmall.model.Product;
 import com.sophia.springbootmall.service.ProductService;
@@ -25,9 +26,17 @@ public class ProductController {
             @RequestParam(required = false) ProductCategory category,
             //required = false代表category是可選的參數非必選
             @RequestParam(required = false) String search
-            //equired = false代表關鍵字搜尋非必選
+            //required = false代表關鍵字搜尋非必選
     ){
-        List<Product> productList = productService.getProducts(category, search);
+
+        //設計productQueryParams，代表以後無論增加多少條件參數都不用再一一檢查慢慢修改，統一在一個class修改
+        ProductQueryParams productQueryParams = new ProductQueryParams();
+        productQueryParams.setCategory(category);
+        productQueryParams.setSearch(search);
+
+        List<Product> productList = productService.getProducts(productQueryParams);
+
+
         return ResponseEntity.status(HttpStatus.OK).body(productList);
         //不管有沒有搜尋到商品都回傳200給前端，和單一搜尋不同
     }

@@ -2,6 +2,7 @@ package com.sophia.springbootmall.dao.impl;
 
 import com.sophia.springbootmall.constant.ProductCategory;
 import com.sophia.springbootmall.dao.ProductDao;
+import com.sophia.springbootmall.dto.ProductQueryParams;
 import com.sophia.springbootmall.dto.ProductRequest;
 import com.sophia.springbootmall.model.Product;
 import com.sophia.springbootmall.rowmapper.ProductRowMapper;
@@ -24,7 +25,7 @@ public class ProductDaoImpl implements ProductDao {
     private NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     @Override
-    public List<Product> getProducts(ProductCategory category,String search) {
+    public List<Product> getProducts(ProductQueryParams productQueryParams) {
 
         String sql = "SELECT product_id, product_name, category, image_url, price, stock, description, " +
                 "created_date, last_modified_date " +
@@ -36,14 +37,14 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object>  map = new HashMap<>();
 
 
-        if(category !=null){  //一定要在一開始做是否null的檢查
+        if(productQueryParams.getCategory() !=null){  //一定要在一開始做是否null的檢查
             sql = sql + " AND category = :category"; // AND前面一定要留空白鍵！
-            map.put("category", category.name()); //將enum類型轉成字串再加到map裡面
+            map.put("category", productQueryParams.getCategory().name()); //將enum類型轉成字串再加到map裡面
         }
 
-        if(search !=null){
+        if(productQueryParams.getSearch() !=null){
             sql = sql + " AND product_name LIKE :search" ; // AND前面一定要留空白鍵！
-            map.put("search", "%" +search + "%"); // 注意%不能寫在上面SQL語句裡
+            map.put("search", "%" + productQueryParams.getSearch() + "%"); // 注意%不能寫在上面SQL語句裡
         }
 
 
