@@ -9,11 +9,15 @@ import com.sophia.springbootmall.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
+@Validated
 @RestController
 public class ProductController {
 
@@ -32,8 +36,15 @@ public class ProductController {
             //以下為排序 Sorting參數
             @RequestParam(defaultValue = "created_date") String orderBy,
             //根據created_date作排序
-            @RequestParam(defaultValue = "desc") String sort
+            @RequestParam(defaultValue = "desc") String sort,
             //升幂asc或降幂desc排序
+
+            //分頁 Pagination
+            @RequestParam(defaultValue = "5") @Max(1000) @Min(0) Integer limit,
+            //取得幾筆數據,最少不能<0，避免前端傳負數過來
+            @RequestParam(defaultValue = "0") @Min(0) Integer offset //挑過多少筆數據
+            //加了@Max和@Min,最上面的class一定要加@Validated，才會生效
+
     ){
 
         //設計productQueryParams，代表以後無論增加多少條件參數都不用再檢查Service,Dao，統一在一個class修改
@@ -42,6 +53,8 @@ public class ProductController {
         productQueryParams.setSearch(search);
         productQueryParams.setOrderBy(orderBy);
         productQueryParams.setSort(sort);
+        productQueryParams.setLimit(limit);
+        productQueryParams.setOffset(offset);
 
         List<Product> productList = productService.getProducts(productQueryParams);
 

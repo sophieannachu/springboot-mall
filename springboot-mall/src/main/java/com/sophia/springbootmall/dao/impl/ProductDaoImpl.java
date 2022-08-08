@@ -36,7 +36,7 @@ public class ProductDaoImpl implements ProductDao {
 
         Map<String, Object>  map = new HashMap<>();
 
-
+        //查詢條件
         if(productQueryParams.getCategory() !=null){  //一定要在一開始做是否null的檢查
             sql = sql + " AND category = :category"; // AND前面一定要留空白鍵！
             map.put("category", productQueryParams.getCategory().name()); //將enum類型轉成字串再加到map裡面
@@ -47,9 +47,15 @@ public class ProductDaoImpl implements ProductDao {
             map.put("search", "%" + productQueryParams.getSearch() + "%"); // 注意%不能寫在上面SQL語句裡
         }
 
+        //排序
         //ORDER BY和 Sort原本就已預設好，所以不用再做null檢查～
         sql = sql +" ORDER BY " + productQueryParams.getOrderBy() + " " + productQueryParams.getSort();
         // 注意不能寫成 ORDER by :orderBy
+
+        //分頁
+        sql = sql + " LIMIT :limit OFFSET :offset "; //取多少筆數據, 略過多少筆
+        map.put("limit", productQueryParams.getLimit());
+        map.put("offset", productQueryParams.getOffset());
 
         List<Product> productList = namedParameterJdbcTemplate.query(sql, map, new ProductRowMapper());
 
