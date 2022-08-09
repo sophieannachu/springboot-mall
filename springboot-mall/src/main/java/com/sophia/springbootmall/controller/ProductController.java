@@ -6,6 +6,7 @@ import com.sophia.springbootmall.dto.ProductQueryParams;
 import com.sophia.springbootmall.dto.ProductRequest;
 import com.sophia.springbootmall.model.Product;
 import com.sophia.springbootmall.service.ProductService;
+import com.sophia.springbootmall.util.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +27,7 @@ public class ProductController {
 
 
     @GetMapping("/products")
-    public ResponseEntity<List<Product>> getProducts(
+    public ResponseEntity<Page<Product>> getProducts(
             //以下為查詢條件Filtering參數
             @RequestParam(required = false) ProductCategory category,
             //required = false代表category是可選的參數非必選
@@ -56,10 +57,21 @@ public class ProductController {
         productQueryParams.setLimit(limit);
         productQueryParams.setOffset(offset);
 
+        //取得product list
         List<Product> productList = productService.getProducts(productQueryParams);
 
+        //取得product 總數
+        Integer total =productService.countProduct(productQueryParams); //根據查詢條件算出商品總筆數有多少
 
-        return ResponseEntity.status(HttpStatus.OK).body(productList);
+
+        //分頁
+        Page<Product> page = new Page<>();
+        page.setLimit(limit);
+        page.setOffset(offset);
+        page.setTotal(total);
+        page.setResult(productList); //商品列表放到page裡面
+
+        return ResponseEntity.status(HttpStatus.OK).body(page);
         //不管有沒有搜尋到商品都回傳200給前端，和單一搜尋不同
     }
 
