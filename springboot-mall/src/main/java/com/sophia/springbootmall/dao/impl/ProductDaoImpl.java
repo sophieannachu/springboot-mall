@@ -32,15 +32,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object>  map = new HashMap<>();
 
         //查詢條件
-        if(productQueryParams.getCategory() !=null){  //一定要在一開始做是否null的檢查
-            sql = sql + " AND category = :category"; // AND前面一定要留空白鍵
-            map.put("category", productQueryParams.getCategory().name()); //將enum類型轉成字串再加到map裡面
-        }
-
-        if(productQueryParams.getSearch() !=null){
-            sql = sql + " AND product_name LIKE :search" ; // AND前面一定要留空白鍵
-            map.put("search", "%" + productQueryParams.getSearch() + "%"); // 注意%不能寫在上面SQL語句裡
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         Integer total = namedParameterJdbcTemplate.queryForObject(sql, map, Integer.class);
         //queryForObject通常用在取得count值
@@ -62,15 +54,7 @@ public class ProductDaoImpl implements ProductDao {
         Map<String, Object>  map = new HashMap<>();
 
         //查詢條件
-        if(productQueryParams.getCategory() !=null){  //一定要在一開始做是否null的檢查
-            sql = sql + " AND category = :category"; // AND前面一定要留空白鍵！
-            map.put("category", productQueryParams.getCategory().name()); //將enum類型轉成字串再加到map裡面
-        }
-
-        if(productQueryParams.getSearch() !=null){
-            sql = sql + " AND product_name LIKE :search" ; // AND前面一定要留空白鍵！
-            map.put("search", "%" + productQueryParams.getSearch() + "%"); // 注意%不能寫在上面SQL語句裡
-        }
+        sql = addFilteringSql(sql, map, productQueryParams);
 
         //排序
         //ORDER BY和 Sort原本就已預設好，所以不用再做null檢查～
@@ -166,5 +150,20 @@ public class ProductDaoImpl implements ProductDao {
         map.put("productId", productId);
 
         namedParameterJdbcTemplate.update(sql, map);
+    }
+
+    private String addFilteringSql(String sql, Map<String, Object>map, ProductQueryParams productQueryParams){
+        //查詢條件
+        if(productQueryParams.getCategory() !=null){  //一定要在一開始做是否null的檢查
+            sql = sql + " AND category = :category"; // AND前面一定要留空白鍵
+            map.put("category", productQueryParams.getCategory().name()); //將enum類型轉成字串再加到map裡面
+        }
+
+        if(productQueryParams.getSearch() !=null){
+            sql = sql + " AND product_name LIKE :search" ; // AND前面一定要留空白鍵
+            map.put("search", "%" + productQueryParams.getSearch() + "%"); // 注意%不能寫在上面SQL語句裡
+        }
+
+        return  sql;
     }
 }
