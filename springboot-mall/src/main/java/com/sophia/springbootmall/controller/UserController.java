@@ -1,5 +1,6 @@
 package com.sophia.springbootmall.controller;
 
+import com.sophia.springbootmall.dto.UserLoginRequest;
 import com.sophia.springbootmall.dto.UserRegisterRequest;
 import com.sophia.springbootmall.model.User;
 import com.sophia.springbootmall.service.UserService;
@@ -27,5 +28,14 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
+
+    @PostMapping("/users/login")
+    public ResponseEntity<User> login(@RequestBody @Valid UserLoginRequest userLoginRequest) {
+        User user = userService.login(userLoginRequest);
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+
+    }
+
 
 }

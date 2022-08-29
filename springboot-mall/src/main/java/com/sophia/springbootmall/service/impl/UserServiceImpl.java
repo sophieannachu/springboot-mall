@@ -1,6 +1,7 @@
 package com.sophia.springbootmall.service.impl;
 
 import com.sophia.springbootmall.dao.UserDao;
+import com.sophia.springbootmall.dto.UserLoginRequest;
 import com.sophia.springbootmall.dto.UserRegisterRequest;
 import com.sophia.springbootmall.model.User;
 import com.sophia.springbootmall.service.UserService;
@@ -40,5 +41,22 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Integer userId) {
         return userDao.getUserById(userId);
+    }
+
+
+    @Override
+    public User login(UserLoginRequest userLoginRequest) {
+        User user = userDao.getUserByEmail(userLoginRequest.getEmail());
+
+        if(user == null){
+            log.warn("該 email{}尚未註冊" , userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST); //回傳400給前端
+        }
+        if(user.getPassword().equals(userLoginRequest.getPassword())){
+            return user; //user存在在資料庫內的值 equals 前端傳過來的值, 不可使用「==」or「=」
+        }else{
+            log.warn("email{}的密碼不正確", userLoginRequest.getEmail());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
 }
